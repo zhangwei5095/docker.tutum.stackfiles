@@ -1,24 +1,67 @@
-
-<div class="container">
-    <div style="text-align:center;">
-        <h2>Stackfile details</h2>
+<div class="col-lg-12 gradient">
+    <div class="elem-bar">
+        <h2><a href="/registry">Stacks</a> / {{data.title}}</h2>
+        <a class="delete-btn pull-right" ng-show="loaded == true && user==data.author" ng-click="deleteStackfile(data._id)"><img src="img/delete.svg"></a>
+        <a class="download-btn pull-right" download target="blank" href="{{downloadLink}}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 20h14v-2H5v2z"/></svg></a>
     </div>
-    <div class="col-lg-12">
-        <h4>{{data.title}} by <a href="{{data.profileLink}}">{{data.user}}</a></h4>
-        <p>{{data.readme}}</p>
+</div>
+<div id="loading" ng-hide="loaded == true">
+    <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle class="path" fill="none" stroke-width="4" stroke-linecap="round" cx="33" cy="33" r="25"></circle>
+    </svg>
+</div>
+<modal title="Embed" visible="showModal">
+    <p>You can embed a Stackfile in any text field that supports Javascript, such as a blog post. Copy the Embed Script below.</p>
+    <form role="form">
         <div class="form-group">
-          <label for="compose-file">Compose File</label>
-          <textarea class="form-control" rows="15" id="compose-file" ng-model="composeFile" disabled/>
+            <p>Embed Script <span class="pull-right" ng-show="copied">Copied!</span></p>
+            <input type="text" onClick="this.setSelectionRange(0, this.value.length)" id="embed" placeholder="script"  ng-model="embedScript" />
+            <a ui-zeroclip zeroclip-model="embedScript" zeroclip-copied="copied=!copied"><img src="img/copy.svg"></a>
         </div>
-        <div class="form-group">
-            <label for="tags">Tags</label>
-            <div ng-repeat="tag in tags">
-                <div>{{tag}}</div>
+    </form>
+</modal>
+<div class="col-lg-12 content-list" ng-show="err == true">
+    <div class="no-content">
+        <p>Oops! Something bad happened!</p>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div id="detail" class="container-fluid" ng-show="loaded == true && err != true">
+        <hr>
+        <div class="section">
+            <div class="label">Description</div>
+            <div class="content">
+                {{data.description}}
             </div>
         </div>
-        <a href="https://dashboard.tutum.co/stack/deploy/?repo={{data.projectUrl}}"><img src="https://s.tutum.co/deploy-to-tutum.svg"></a>
-        <br/>
-        <br/>
-        <a href="/registry">Back to registry</a>
+        <hr>
+        <div class="section">
+            <div class="label">Images</div>
+            <div class="content">
+              <div class="images" ng-repeat="image in images">
+                  <a href="https://hub.docker.com/r/{{image}}" target="blank">{{image}}</a>
+              </div>
+            </div>
+        </div>
+        <hr>
+        <div class="section">
+            <div class="label">Service tags</div>
+            <div class="content">
+              <div class="tags" ng-repeat="tags in data.tags">
+                  <div class="grey-tag">{{tags}}</div>
+              </div>
+            </div>
+        </div>
+        <hr>
+        <div class="section">
+            <div class="label">Stackfile</div>
+            <div class="stackfile">
+                <code-mirror lang="yaml" model="composeFile"></code-mirror>
+                <p>Not sure what a stackfile is? Click <a href="https://support.tutum.co/support/solutions/articles/5000583471" target="_blank">here</a> to learn more</p>
+            </div>
+        </div>
+        <hr>
+        <button class="btn boxed-btn deploy-btn full pull-right" ng-click="deploy(data._id)">Deploy to Docker Cloud</button>
+        <button class="btn boxed-btn embed-btn pull-right" data-toggle="tooltip" data-placement="top" title="Click here to deploy this stack on your Tutum account" ng-click="toggleModal(); generateEmbed(data._id);">Embed</button>
     </div>
 </div>
